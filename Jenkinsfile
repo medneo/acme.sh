@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-//vim: set ts=2 sts=2 sw=2 noexpandtab
+// vim: set ts=2 sts=2 sw=2 noexpandtab:
 
 pipeline {
 
@@ -42,7 +42,7 @@ pipeline {
                   //first push with our dedicated build tag
                   app.push()
                   //which branch should trigger a push as latest..
-                  if((env.BRANCH_NAME == 'develop')){
+                  if((env.BRANCH_NAME == 'dev')){
                     //now push as latest directly after (should not be problematic, as all layers are already pushed to the registry)
                     app.push('latest')
                   }
