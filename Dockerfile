@@ -52,19 +52,7 @@ RUN for verb in help \
     printf -- "%b" "#!/usr/bin/env sh\n/root/.acme.sh/acme.sh --${verb} --config-home /acme.sh \"\$@\"" >/usr/local/bin/--${verb} && chmod +x /usr/local/bin/--${verb} \
   ; done
 
-RUN printf "%b" '#!'"/usr/bin/env sh\n \
-if [ \"\$1\" = \"daemon\" ];  then \n \
- #trap \"echo stop && killall crond && exit 0\" SIGTERM SIGINT \n \
- #crond && while true; do sleep 1; done;\n \
- if [ ! -f /tls/fullchain.cer ]; then \n \
-  --issue --dns dns_aws -d \"\$2\" \n \
-  --install-cert -d \"\$2\" --fullchain-file /tls/fullchain.cer --key-file /tls/key.key \n \
- fi \n\
- exec crond -f \n \
-else \n \
- exec -- \"\$@\"\n \
-fi" >/entry.sh && chmod +x /entry.sh
-
+ADD ./entry.sh /
 VOLUME /acme.sh
 
 ENTRYPOINT ["/entry.sh"]
