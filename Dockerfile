@@ -18,7 +18,7 @@ ENV AUTO_UPGRADE 1
 ADD ./ /install_acme.sh/
 ADD ./entry.sh /
 RUN cd /install_acme.sh && ([ -f /install_acme.sh/acme.sh ] && /install_acme.sh/acme.sh --install || curl https://get.acme.sh | sh) && rm -rf /install_acme.sh/
-RUN mkdir /tls /acme.sh
+RUN mkdir /tls
 
 VOLUME /acme.sh
 VOLUME /tls
