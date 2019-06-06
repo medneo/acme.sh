@@ -16,12 +16,16 @@ ENV AUTO_UPGRADE 1
 
 #Install
 ADD ./ /install_acme.sh/
+ADD ./entry.sh /
 RUN cd /install_acme.sh && ([ -f /install_acme.sh/acme.sh ] && /install_acme.sh/acme.sh --install || curl https://get.acme.sh | sh) && rm -rf /install_acme.sh/
+RUN mkdir /tls
 
+VOLUME /acme.sh
+VOLUME /tls
 
 RUN ln -s  /root/.acme.sh/acme.sh  /usr/local/bin/acme.sh && crontab -l | grep acme.sh | sed 's#> /dev/null##' | crontab -
 
-RUN for verb in help \ 
+RUN for verb in help \
   version \
   install \
   uninstall \
@@ -51,16 +55,6 @@ RUN for verb in help \
   ; do \
     printf -- "%b" "#!/usr/bin/env sh\n/root/.acme.sh/acme.sh --${verb} --config-home /acme.sh \"\$@\"" >/usr/local/bin/--${verb} && chmod +x /usr/local/bin/--${verb} \
   ; done
-
-RUN printf "%b" '#!'"/usr/bin/env sh\n \
-if [ \"\$1\" = \"daemon\" ];  then \n \
- trap \"echo stop && killall crond && exit 0\" SIGTERM SIGINT \n \
- crond && while true; do sleep 1; done;\n \
-else \n \
- exec -- \"\$@\"\n \
-fi" >/entry.sh && chmod +x /entry.sh
-
-VOLUME /acme.sh
 
 ENTRYPOINT ["/entry.sh"]
 CMD ["--help"]
